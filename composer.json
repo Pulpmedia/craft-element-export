@@ -1,0 +1,40 @@
+{
+    "name": "pulpmedia/entry-export",
+    "description": "Export Entries to PDF, Excel or CSV",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "entry export"
+    ],
+    "support": {
+        "docs": "???",
+        "issues": "???"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexandre Kilian",
+            "homepage": "https://www.pulpmedia.at"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "pulpmedia\\entryexport\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Entry Export",
+        "handle": "entry-export",
+        "hasCpSettings": false,
+        "hasCpSection": true,
+        "changelogUrl": "???",
+        "class": "pulpmedia\\entryexport\\EntryExport"
+    }
+}
