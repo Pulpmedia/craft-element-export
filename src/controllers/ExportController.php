@@ -81,11 +81,13 @@ class ExportController extends Controller
         $config = ElementHelper::getConfigByTypeAndSource($type, $source);
         $elements = Craft::$app->getElements();
 
-        $settings = [];
-        $settingRows = explode("\n", $config['settings']);
-        foreach($settingRows as $row){
-            $line = explode(':', $row);
-            $settings[trim($line[1])] = trim($line[0]);
+        $settings = ['id' => 'ID', 'title' => 'Title'];
+        if($config){
+            $settingRows = explode("\n", $config['settings']);
+            foreach($settingRows as $row){
+                $line = explode(':', $row);
+                $settings[trim($line[1])] = $line[0];
+            }
         }
 
         $query = $this->_elementQuery();
@@ -185,6 +187,8 @@ class ExportController extends Controller
             return $element->firstName;
             case 'lastname':
             return $element->lastName;
+            case 'email':
+            return $element->email;
             default:
             $value =  $element->getFieldValue($key);
             break;
