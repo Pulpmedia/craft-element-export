@@ -3,6 +3,7 @@ class ExportButton {
         this.init();
 
         this.settings = {};
+        this.fields = {};
         this.exportEntries = this.exportEntries.bind(this);
     }
 
@@ -39,9 +40,31 @@ class ExportButton {
         };
     }
     
+    loadElementSettings() {
+        const data = {
+            elementType: Craft.elementIndex.elementType
+        };
+        data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
+        $.ajax ({
+            url: '/index.php?p=admin/actions/element-index-settings/get-customize-sources-modal-data',
+            type: "POST",
+            data: data,
+            dataType: "json",
+            // contentType: "application/json; charset=utf-8",
+            // accepts: "application/json",
+            success: function(data){
+                this.fields = data;
+            }
+        });
+    }
     
     exportEntries() {
+
         this.updateSettings();
+        // this.loadElementSettings();
+        
+        // $.post('', , function(data) {
+        // });
 
         const data = this.settings;
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
@@ -52,6 +75,7 @@ class ExportButton {
         const $form = $('<form/>');
         $form.attr('action','/admin/actions/entry-export/export');
         $form.attr('method','POST');
+        $form.attr('target','_blank');
 
         for(let key in data){
             if(typeof data[key] === 'object'){

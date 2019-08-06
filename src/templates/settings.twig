@@ -1,46 +1,7 @@
-{# @var craft \craft\web\twig\variables\CraftVariable #}
-{#
-/**
- * Entry Export plugin for Craft CMS 3.x
- *
- * Entry Export index.twig
- *
- * @author    Alexandre Kilian
- * @copyright Copyright (c) 2019 Alexandre Kilian
- * @link      https://www.pulpmedia.at
- * @package   EntryExport
- * @since     1.0.0
- */
-#}
-
-{% extends "_layouts/cp" %}
+{% extends "entry-export/_layouts/main" %}
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("pulpmedia\\entryexport\\assetbundles\\entryexport\\EntryExportAsset") %}
-{% do view.registerAssetBundle("pulpmedia\\entryexport\\assetbundles\\settingscpsection\\SettingsCPSectionAsset") %}
+{% set fullPageForm = true %}
 
-{# Link for the ? icon at the bottom of the page #}
-{% set docsUrl = "???" %}
-
-{# The title of this CP section #}
-{% set title = "Entry Export" %}
-
-{# The URL to this plugin's base CP section #}
-{% set pluginCpUrl = url('entry-export') %}
-
-{# Get a URL to an image in our AssetBundle #}
-{% set iconUrl = view.getAssetManager().getPublishedUrl('@pulpmedia/entryexport/assetbundles/settingscpsection/dist', true) ~ '/img/Settings-icon.svg' %}
-
-{# Content that should appear in the page header#}
-{% set extraPageHeaderHtml %}
-    <div class="buttons">
-        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('entry-export') }}</a>
-    </div>
-{% endset %}
-
-{# The content of the CP Section#}
-{% set content %}
-    <h2>{{ "Settings CP Section body goes here"|t('entry-export') }}</h2>
-    <img src="{{ iconUrl }}" height="64" width="64" />
-    <p class="textline"></p>
-{% endset %}
+{% block content %}
+{% endblock %}

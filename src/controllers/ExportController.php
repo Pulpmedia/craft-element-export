@@ -14,7 +14,7 @@ use pulpmedia\entryexport\EntryExport;
 
 use Craft;
 use craft\web\Controller;
-use craft\helpers\ElementHelper;
+use pulpmedia\entryexport\helpers\ElementHelper;
 
 use craft\web\Response;
 
@@ -76,13 +76,21 @@ class ExportController extends Controller
 
         $request = Craft::$app->getRequest();
         $params = $request->getBodyParams();
-
-        $this->_source = ElementHelper::findSource($params['elementType'], $params['sourceKey'], $params['context']);
+        $type = ElementHelper::getElementHandleByType($params['elementType']);
+        $source = str_replace(':', '-', $params['sourceKey']);
+        $config = ElementHelper::getConfigByTypeAndSource($type, $source);
         $elements = Craft::$app->getElements();
+
+        $settings = [];
+        $settingRows = explode("\n", $config['settings']);
+        foreach($settingRows as $row){
+            $line = explode(':', $row);
+            $settings[trim($line[1])] = trim($line[0]);
+        }
 
         $query = $this->_elementQuery();
         $elements = $query->all();
-        $response = $this->export($elements, ['id' => 'ID', 'firstname' => 'Vorname', 'lastname' => 'Nachname'], 'pdf');
+        $response = $this->export($elements, $settings, 'pdf');
         return $response;
     }
 
@@ -132,30 +140,42 @@ class ExportController extends Controller
             }
 
         }
-        $filename = 'export.';
+        $filename = 'exports/export-'.sha1(md5(uniqid())).'-'.date('d-m-y-H-i').'.';
+        $applicatiom = 'application/vnd.ms-excel';
         switch($type){
             case 'xlsx': {
                 $writer = new Xlsx($spreadsheet);
+                $applicatiom = 'application/vnd.ms-excel';
                 $filename.='xlsx';
                 break;
             }
             case 'pdf': {
                 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Mpdf');
                 $filename.='pdf';
+                $applicatiom = 'application/pdf';
                 break;
             }
         }
         
-        // $f = fopen('php://output', 'w'); 
+        // $writer->save($filename);
         $writer->save($filename);
+        // $f = fopen($filename, 'w'); 
         $response = new Response();
         // $response->stream = $f;
-        // $response->setDownloadHeaders('file.xlsx', 'application/vnd.ms-excel');
+        // $response->setDownloadHeaders($filename, $applicatiom);
 
-        return $response;
+        return $this->redirect('/'.$filename);
     }
 
     private function getFieldValue($element, $key){
+        if(strpos($key, '.') > -1){
+            $children = explode('.', $key);
+            $childElement = $element->getFieldValue($children[0])->first();
+            unset($children[0]);
+            $remainingKey = implode('.',$children);
+            return $this->getFieldValue($childElement, $remainingKey);
+        } else {
+
         switch($key) {
             case 'id':
             return $element->id;
@@ -166,9 +186,11 @@ class ExportController extends Controller
             case 'lastname':
             return $element->lastName;
             default:
-            return $element->getFieldValue($key);
+            $value =  $element->getFieldValue($key);
             break;
         }
+        return $value;
+    }
     }
 
     /**

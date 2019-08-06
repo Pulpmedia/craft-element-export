@@ -1,0 +1,24 @@
+{% extends "entry-export/_layouts/main" %}
+{% import "_includes/forms" as forms %}
+
+{% set fullPageForm = true %}
+
+{% block content %}
+<form action="" method="post" accept-charset="UTF-8">
+    <input type="hidden" name="action" value="entry-export/settings/save">
+    <input type="hidden" name="pluginHandle" value="entry-export">
+    <input type="hidden" name="type" value="{{ elementType }}">
+    <input type="hidden" name="source" value="{{ sourceKey }}">
+    <input type="hidden" name="id" value="{{ config ? config.id : '' }}">
+    {{ redirectInput('entry-export/filters/'~elementType~'/'~sourceKey) }}
+    {{ csrfInput() }}
+    {{ forms.textareaField({
+            id: 'dynamicSettings',
+            name: 'settings',
+            label: 'Filter Options'|t('searchit'),
+            instructions: 'Use json or twig to define this filters options.'|t('searchit'),
+            rows: 14,
+            class: 'code',
+            value: config ? config.settings,
+        }) }}
+{% endblock %}

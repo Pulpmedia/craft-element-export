@@ -19,6 +19,9 @@ use craft\web\UrlManager;
 use craft\events\RegisterUrlRulesEvent;
 use craft\web\View;
 use craft\events\TemplateEvent;
+use craft\events\RegisterCpNavItemsEvent;
+use craft\web\twig\variables\Cp;
+
 
 use pulpmedia\entryexport\web\assets\EntryExportAssetBundle;
 
@@ -88,6 +91,17 @@ class EntryExport extends Plugin
         //     function (RegisterUrlRulesEvent $event) {
         //     }
         // );
+
+        Event::on(
+            Cp::class,
+            Cp::EVENT_REGISTER_CP_NAV_ITEMS,
+            function(RegisterCpNavItemsEvent $event) {
+                $event->navItems[] = [
+                    'url' => 'section-url',
+                    'label' => 'Section Label',
+                ];
+            }
+        );
         
         // Register our CP routes
         Event::on(
@@ -95,7 +109,9 @@ class EntryExport extends Plugin
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['siteActionTrigger1'] = 'entry-export/export';
-                $event->rules['cpActionTrigger1'] = 'entry-export/export/do-something';
+                $event->rules['entry-export'] = 'entry-export/settings';
+                $event->rules['entry-export/filters/<elementTypeHandle:{handle}>/<sourceHandle:{slug}>'] = 'entry-export/settings/source';
+                $event->rules['entry-export/filters/<elementTypeHandle:{handle}>'] = 'entry-export/settings/source';
             }
         );
 
@@ -146,7 +162,11 @@ class EntryExport extends Plugin
             __METHOD__
         );
     }
-
+    public function getCpNavItem()
+    {
+        $item = parent::getCpNavItem();
+        return $item;
+    }
     // Protected Methods
     // =========================================================================
 
