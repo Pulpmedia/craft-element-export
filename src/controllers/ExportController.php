@@ -18,6 +18,13 @@ use craft\helpers\ElementHelper;
 
 use craft\web\Response;
 
+use craft\elements\User;
+use craft\elements\Entry;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf;
+
 /**
  * Export Controller
  *
@@ -75,18 +82,93 @@ class ExportController extends Controller
 
         $query = $this->_elementQuery();
         $elements = $query->all();
-        $f = fopen('php://output', 'w'); 
-
-        fputcsv($f,['title', 'id'],";");
-        foreach($elements as $element) {
-            fputcsv($f,[$element->title, $element->id],";");
-            $elements[] = [$element->title, $element->id];
-        }
-
-        $response = new Response();
-        $response->stream = $f;
-        $response->setDownloadHeaders('file.csv', 'application/csv');
+        $response = $this->export($elements, ['id' => 'ID', 'firstname' => 'Vorname', 'lastname' => 'Nachname'], 'pdf');
         return $response;
+    }
+
+    // protected function exportCsv($elements, $fields = ['id' => 'ID', 'title' => 'Title']) {
+    //     $f = fopen('php://output', 'w'); 
+
+    //     fputcsv($f,$fields,";");
+
+    //     foreach($elements as $element) {
+    //         $line = [];
+    //         foreach($fields as $key => $label){
+    //             $line[] = $this->getFieldValue($element, $key);
+    //         }
+    //         fputcsv($f,$line,";");
+    //         $elements[] = [$element->title, $element->id];
+    //     }
+
+    //     $response = new Response();
+    //     $response->stream = $f;
+    //     $response->setDownloadHeaders('file.csv', 'application/csv');
+
+    //     return $response;
+    // }
+    protected function export($elements, $fields = ['id' => 'ID', 'title' => 'Title'], $type = 'xlsx') {
+        $alphabet = array('a', 'b', 'c', 'd', 'e',
+        'f', 'g', 'h', 'i', 'j',
+        'k', 'l', 'm', 'n', 'o',
+        'p', 'q', 'r', 's', 't',
+        'u', 'v', 'w', 'x', 'y',
+        'z'
+        );
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $i = 0;
+        foreach($fields as $field){
+            $sheet->setCellValue($alphabet[$i]. 1, $field);
+            $i++;
+        }
+        $i = 1;
+        foreach($elements as $element) {
+            $j = 0;
+            $i++;
+            foreach($fields as $key => $label){
+                $sheet->setCellValue($alphabet[$j] . $i, $this->getFieldValue($element, $key));
+                $j++;
+            }
+
+        }
+        $filename = 'export.';
+        switch($type){
+            case 'xlsx': {
+                $writer = new Xlsx($spreadsheet);
+                $filename.='xlsx';
+                break;
+            }
+            case 'pdf': {
+                $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Mpdf');
+                $filename.='pdf';
+                break;
+            }
+        }
+        
+        // $f = fopen('php://output', 'w'); 
+        $writer->save($filename);
+        $response = new Response();
+        // $response->stream = $f;
+        // $response->setDownloadHeaders('file.xlsx', 'application/vnd.ms-excel');
+
+        return $response;
+    }
+
+    private function getFieldValue($element, $key){
+        switch($key) {
+            case 'id':
+            return $element->id;
+            case 'title':
+            return $element->title;
+            case 'firstname':
+            return $element->firstName;
+            case 'lastname':
+            return $element->lastName;
+            default:
+            return $element->getFieldValue($key);
+            break;
+        }
     }
 
     /**

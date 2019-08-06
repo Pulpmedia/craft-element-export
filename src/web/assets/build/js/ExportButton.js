@@ -46,6 +46,9 @@ class ExportButton {
         const data = this.settings;
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
 
+        // $.post('/admin/actions/entry-export/export', data);
+        // return;
+
         const $form = $('<form/>');
         $form.attr('action','/admin/actions/entry-export/export');
         $form.attr('method','POST');
