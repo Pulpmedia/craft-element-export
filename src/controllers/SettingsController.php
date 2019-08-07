@@ -72,8 +72,8 @@ class SettingsController extends Controller
     }
     public function actionSource($elementTypeHandle, $sourceHandle = null)
     {
-        $elementType = ElementHelper::getElementTypeByHandle($elementTypeHandle);
         $this->requireAdmin();
+        $elementType = ElementHelper::getElementTypeByHandle($elementTypeHandle);
 
 
         $config = ElementHelper::getConfigByTypeAndSource($elementTypeHandle, $sourceHandle);

@@ -15,6 +15,8 @@ use pulpmedia\entryexport\EntryExport;
 use Craft;
 use craft\web\Controller;
 use pulpmedia\entryexport\helpers\ElementHelper;
+use craft\helpers\ElementHelper as BaseElementHelper;
+
 
 use craft\web\Response;
 
@@ -60,6 +62,19 @@ class ExportController extends Controller
      */
     protected $allowAnonymous = ['index', 'do-something'];
 
+
+    public function actionConfig() {
+        $this->requireAdmin();
+        $this->requirePostRequest();
+        $request = Craft::$app->getRequest();
+        $params = $request->getBodyParams();
+        $type = ElementHelper::getElementHandleByType($params['elementType']);
+        $source = str_replace(':', '-', $params['sourceKey']);
+        $config = ElementHelper::getConfigByTypeAndSource($type, $source);
+
+        return $this->asJson(['config' => $config !== null]);
+    }
+
     // Public Methods
     // =========================================================================
 
@@ -78,6 +93,7 @@ class ExportController extends Controller
         $params = $request->getBodyParams();
         $type = ElementHelper::getElementHandleByType($params['elementType']);
         $source = str_replace(':', '-', $params['sourceKey']);
+        $this->_source = BaseElementHelper::findSource($params['elementType'], $params['sourceKey'], $params['context']);
         $config = ElementHelper::getConfigByTypeAndSource($type, $source);
         $elements = Craft::$app->getElements();
 
@@ -92,7 +108,7 @@ class ExportController extends Controller
 
         $query = $this->_elementQuery();
         $elements = $query->all();
-        $response = $this->export($elements, $settings, 'pdf');
+        $response = $this->export($elements, $settings, $params['format']);
         return $response;
     }
 

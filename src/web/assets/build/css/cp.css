@@ -1,3 +1,6 @@
+.export-btn .btn{
+    font-weight: bold;
+}
 .export-btn .btn:before{
     font-size: 14px;
 }

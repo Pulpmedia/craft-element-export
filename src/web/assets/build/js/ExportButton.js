@@ -8,6 +8,7 @@ class ExportButton {
     }
 
     init() {
+        this.checkConfig();
         if(!$('.export-btn').hasClass('export-btn')) {
             this.createButton();
         }
@@ -15,14 +16,31 @@ class ExportButton {
     }
 
     createButton() {
+        this.createButtonXlsx();
+        this.createButtonPdf();
+    }
+    createButtonPdf() {
         const $wrapper = $('<div />');
         $wrapper.addClass('export-btn');
         const $btn = $('<button/>');
         $btn.attr('data-icon', 'download');
+        $btn.text('pdf');
         $btn.addClass('btn');
         $wrapper.append($btn);
 
-        $btn.click(() => this.exportEntries());
+        $btn.click(() => this.exportEntries('pdf'));
+        $('.toolbar .flex').append($wrapper);
+    }
+    createButtonXlsx() {
+        const $wrapper = $('<div />');
+        $wrapper.addClass('export-btn');
+        const $btn = $('<button/>');
+        $btn.attr('data-icon', 'download');
+        $btn.text('xlsx');
+        $btn.addClass('btn');
+        $wrapper.append($btn);
+
+        $btn.click(() => this.exportEntries('xlsx'));
         $('.toolbar .flex').append($wrapper);
     }
 
@@ -38,6 +56,20 @@ class ExportButton {
             criteria: this.elementIndex.settings.criteria,
             sourceKey: this.elementIndex.sourceKey,
         };
+    }
+
+    checkConfig() {
+        this.updateSettings();
+        const data = this.settings;
+        data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
+        $.post('/admin/actions/entry-export/export/config', data , function(data) {
+
+            if(data.config){
+                $('.export-btn').show();
+            } else {
+                $('.export-btn').hide();
+            }
+        });
     }
     
     loadElementSettings() {
@@ -58,19 +90,19 @@ class ExportButton {
         });
     }
     
-    exportEntries() {
+    exportEntries(format = 'xlsx') {
 
         this.updateSettings();
         // this.loadElementSettings();
         
-        // $.post('', , function(data) {
-        // });
-
+        
         const data = this.settings;
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
-
+        data.format = format;
+        
         // $.post('/admin/actions/entry-export/export', data);
         // return;
+        
 
         const $form = $('<form/>');
         $form.attr('action','/admin/actions/entry-export/export');
