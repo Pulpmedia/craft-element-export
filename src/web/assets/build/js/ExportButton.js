@@ -8,6 +8,7 @@ class ExportButton {
     }
 
     init() {
+        if(!Craft.elementIndex) return;
         this.checkConfig();
         if(!$('.export-btn').hasClass('export-btn')) {
             this.createButton();
