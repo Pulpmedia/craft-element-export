@@ -2,7 +2,7 @@
     "name": "pulpmedia/craft-element-export",
     "description": "Export Entries to PDF, Excel or CSV",
     "type": "craft-plugin",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "keywords": [
         "craft",
         "cms",

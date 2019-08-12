@@ -78,17 +78,17 @@ class ExportButton {
             elementType: Craft.elementIndex.elementType
         };
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
-        $.ajax ({
-            url: '/index.php?p=admin/actions/element-index-settings/get-customize-sources-modal-data',
-            type: "POST",
-            data: data,
-            dataType: "json",
-            // contentType: "application/json; charset=utf-8",
-            // accepts: "application/json",
-            success: function(data){
-                this.fields = data;
-            }
-        });
+        // $.ajax ({
+        //     url: '/index.php?p=admin/actions/element-index-settings/get-customize-sources-modal-data',
+        //     type: "POST",
+        //     data: data,
+        //     dataType: "json",
+        //     // contentType: "application/json; charset=utf-8",
+        //     // accepts: "application/json",
+        //     success: function(data){
+        //         this.fields = data;
+        //     }
+        // });
     }
     
     exportEntries(format = 'xlsx') {
