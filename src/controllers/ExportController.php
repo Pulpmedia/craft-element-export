@@ -186,6 +186,7 @@ class ExportController extends Controller
     }
 
     private function getFieldValue($element, $key){
+        if(!$element) return '-';
         if(strpos($key, '.') > -1){
             $children = explode('.', $key);
             $childElement = $element->getFieldValue($children[0])->first();
