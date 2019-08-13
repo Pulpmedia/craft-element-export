@@ -46,7 +46,7 @@ class ExportButton {
     }
 
     updateSettings() {
-        this.elementIndex = Craft.elementIndex;
+        this.elementIndex = Object.assign({}, Craft.elementIndex);
         const criteria = this.elementIndex.settings.criteria;
         criteria.siteId = this.elementIndex.siteId;
         criteria.search = this.elementIndex.searchText;
@@ -78,31 +78,15 @@ class ExportButton {
             elementType: Craft.elementIndex.elementType
         };
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
-        // $.ajax ({
-        //     url: '/index.php?p=admin/actions/element-index-settings/get-customize-sources-modal-data',
-        //     type: "POST",
-        //     data: data,
-        //     dataType: "json",
-        //     // contentType: "application/json; charset=utf-8",
-        //     // accepts: "application/json",
-        //     success: function(data){
-        //         this.fields = data;
-        //     }
-        // });
     }
     
     exportEntries(format = 'xlsx') {
 
-        this.updateSettings();
-        // this.loadElementSettings();
-        
+        // this.updateSettings();
         
         const data = this.settings;
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
         data.format = format;
-        
-        // $.post('/admin/actions/entry-export/export', data);
-        // return;
         
 
         const $form = $('<form/>');
@@ -128,9 +112,5 @@ class ExportButton {
 
         $("body").append($form);
         $form.submit();
-        
-        // $.post(, data, function(retData){
-        //     $("body").append("<iframe src='" + retData.url+ "' style='display: none;' ></iframe>");
-        // });
     }
 }
