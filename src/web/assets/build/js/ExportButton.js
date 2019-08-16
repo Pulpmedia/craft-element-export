@@ -47,10 +47,6 @@ class ExportButton {
 
     updateSettings() {
         this.elementIndex = Object.assign({}, Craft.elementIndex);
-        const criteria = this.elementIndex.settings.criteria;
-        criteria.siteId = this.elementIndex.siteId;
-        criteria.search = this.elementIndex.searchText;
-        criteria.status = this.elementIndex.status;
         this.settings = {
             context: this.elementIndex.settings.context,
             elementType: this.elementIndex.elementType,
@@ -82,7 +78,7 @@ class ExportButton {
     
     exportEntries(format = 'xlsx') {
 
-        // this.updateSettings();
+        this.updateSettings();
         
         const data = this.settings;
         data[window.Craft.csrfTokenName] = window.Craft.csrfTokenValue; 
