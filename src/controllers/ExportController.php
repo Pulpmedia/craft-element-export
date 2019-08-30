@@ -199,13 +199,25 @@ class ExportController extends Controller
             case 'id':
             return $element->id;
             case 'title':
-            return $element->title;
+                if($element instanceof Entry){
+                    return $element->title;
+                }
             case 'firstname':
-            return $element->firstName;
+                if($element instanceof User){
+                    return $element->firstName;
+                }
             case 'lastname':
-            return $element->lastName;
+                if($element instanceof User){
+                    return $element->lastName;
+                }
+            case 'fullname':
+                if($element instanceof User){
+                    return $element->fullName;
+                }
             case 'email':
-            return $element->email;
+                if($element instanceof User){
+                    return $element->email;
+                }
             default:
             $value =  $element->getFieldValue($key);
             break;
