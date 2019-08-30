@@ -9,7 +9,7 @@
  */
 
 namespace pulpmedia\entryexport\controllers;
-
+use yii\base\Exception;
 use pulpmedia\entryexport\EntryExport;
 
 use Craft;
@@ -194,36 +194,40 @@ class ExportController extends Controller
             $remainingKey = implode('.',$children);
             return $this->getFieldValue($childElement, $remainingKey);
         } else {
-
-        switch($key) {
-            case 'id':
-            return $element->id;
-            case 'title':
-                if($element instanceof Entry){
-                    return $element->title;
+            try{
+                switch($key) {
+                    case 'id':
+                    return $element->id;
+                    case 'title':
+                        if($element instanceof Entry){
+                            return $element->title;
+                        }
+                    case 'firstname':
+                        if($element instanceof User){
+                            return $element->firstName;
+                        }
+                    case 'lastname':
+                        if($element instanceof User){
+                            return $element->lastName;
+                        }
+                    case 'fullname':
+                        if($element instanceof User){
+                            return $element->fullName;
+                        }
+                    case 'email':
+                        if($element instanceof User){
+                            return $element->email;
+                        }
+                    default:
+                    $value =  $element->getFieldValue($key);
+                    break;
                 }
-            case 'firstname':
-                if($element instanceof User){
-                    return $element->firstName;
-                }
-            case 'lastname':
-                if($element instanceof User){
-                    return $element->lastName;
-                }
-            case 'fullname':
-                if($element instanceof User){
-                    return $element->fullName;
-                }
-            case 'email':
-                if($element instanceof User){
-                    return $element->email;
-                }
-            default:
-            $value =  $element->getFieldValue($key);
-            break;
+                if(is_bool($value)) return $value ? "1" : "0";
+                return $value;
+            } catch(\yii\base\Exception $e) {
+                return "-";
+            }
         }
-        return $value;
-    }
     }
 
     /**
