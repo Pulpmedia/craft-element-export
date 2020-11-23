@@ -30,7 +30,7 @@ class ExportButton {
         $wrapper.append($btn);
 
         $btn.click(() => this.exportEntries('pdf'));
-        $('.toolbar .flex').append($wrapper);
+        $('#toolbar').append($wrapper);
     }
     createButtonXlsx() {
         const $wrapper = $('<div />');
@@ -42,7 +42,7 @@ class ExportButton {
         $wrapper.append($btn);
 
         $btn.click(() => this.exportEntries('xlsx'));
-        $('.toolbar .flex').append($wrapper);
+        $('#toolbar').append($wrapper);
     }
 
     updateSettings() {
